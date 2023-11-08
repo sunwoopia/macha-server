@@ -1,8 +1,7 @@
 import admin from 'firebase-admin';
-import serviceAccount from "serviceAccountKey.json";
-
+// import
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    // credential: admin.credential.cert(serviceAccount),
     databaseURL: 'firebase-adminsdk-qtuo5@macha-26b76.iam.gserviceaccount.com',
 });
 
