@@ -16,10 +16,11 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/bus', async (req, res) => {
+router.get('/bus', async (req, res) => { // 버스 막차 시간 계산 
     const { arsId, busRouteId } = req.body;
+    
     try {
-        const response = await getBustimeByStationList(arsId, busRouteId);
+        const response = await getBustimeByStationList(12173, 100100118);
         res.status(201).json({ response });
     } catch (error) {
         console.error(error);
@@ -27,4 +28,28 @@ router.get('/bus', async (req, res) => {
     }
 });
 
+
+
+router.post('/near', async (req, res) => { // 가장 근접한 버스 정류장
+    const { tmX, tmY, radius } = req.body; 
+    try { 
+        const response = await getStaionsByPosList(tmX, tmY, radius);
+        res.status(201).json({ response });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error Data');
+    }
+}); 
+
+
+router.post('/time',async (req, res) => { 
+    const {busRouteId} = req.body;
+    try {
+        const response = await getArrInfoByRouteAllList(busRouteId);   
+        res.status(201).json({ response });
+    } catch (error) {
+        console.error(error) ;
+        res.status(500).send('Error Data'); 
+    }
+});
 export default router;
