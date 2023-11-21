@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {fetchLastTrainTime, getBusInfo} from "../services/dataService.js";
-import {getAddress, getAddressWithCoordinate} from "../services/naverService.js";
-
+import {getAddress, getAddressWithCoordinate, getMachaData} from "../services/naverService.js";
+import axios from "axios";  
 const router = Router();
 
 // 장소 생성 엔드포인트
@@ -106,4 +106,43 @@ router.get('/naver/coordinate', async (req, res) => {
         console.log(e);
     }
 })
+
+router.get('/macha_api', async (req, res) => {
+    try {
+        // API 호출을 위한 데이터
+        const requestData = {
+            startX: "127.02550910860451",
+            startY: "37.63788539420793",
+            endX: "127.030406594109",
+            endY: "37.609094989686",
+            count: 1,
+            lang: 0,
+            format: "json",
+            searchDttm: "202311221200"
+        };
+
+        // API 호출을 위한 설정
+        const config = {
+            headers: {
+                'accept': 'application/json',
+                'appKey': 'yVelZ5wcsC69m82s0or5Q68Yg4Lfknu57ZN8amog',
+                'content-type': 'application/json'
+            }
+        };
+
+        // API 호출
+        const response = await axios.post('https://apis.openapi.sk.com/transit/routes', requestData, config);
+
+       
+            // API 응답 전송
+        res.status(200).json(response.data);
+        
+    } catch (error) {
+        // 에러 처리
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 export default router;

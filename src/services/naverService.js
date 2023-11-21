@@ -43,3 +43,32 @@ export async function getAddressWithCoordinate(x, y) {
         console.log(error);
     }
 }
+
+const API_URL = 'https://apis.openapi.sk.com/transit/routes';
+const APP_KEY = 'yVelZ5wcsC69m82s0or5Q68Yg4Lfknu57ZN8amog';
+
+export async function getMachaData(startX, startY, endX, endY, lang, format, count, searchDttm) {
+    try {
+        const response = await axios.get(API_URL, {
+            params: {
+                startX,
+                startY,
+                endX,
+                endY,
+                lang,
+                format,
+                count,
+                searchDttm,
+            },
+            headers: {
+                'Accept': 'application/json',
+                'appKey': APP_KEY,
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error(error.toJSON());
+       
+    }
+}
