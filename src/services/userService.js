@@ -1,5 +1,4 @@
-import {usersCollection} from "../collections/userCollection.js";
-
+import { usersCollection } from "../collections/userCollection.js";
 export const createUser = async (userData) => {
     const newUserRef = await usersCollection.add(userData);
     return newUserRef.id;
@@ -20,4 +19,20 @@ export const updateUser = async (userId, updatedData) => {
 
 export const deleteUser = async (userId) => {
     await usersCollection.doc(userId).delete();
+};
+
+export const loginUser = async (email, password) => {
+    try {
+        let userUid;
+        const data = [];
+        const snapshot = await usersCollection.where('email', '==', email).get();
+        snapshot.forEach((doc) => {
+            data.push(doc.data());
+            userUid = doc.exists ? doc.id : null;
+        });
+        return userUid;
+    } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+    }
 };

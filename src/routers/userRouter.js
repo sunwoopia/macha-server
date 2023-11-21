@@ -1,19 +1,19 @@
 import { Router } from 'express';
-import { createUser, getUserById, deleteUser, updateUser } from "../services/userService.js";
+import { createUser, getUserById, deleteUser, updateUser, loginUser } from "../services/userService.js";
 
 const router = Router();
 
-router.post('/users', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const userId = await createUser(req.body);
-        res.status(201).json({ userId });
+        res.status(201).json({ success: true, token: userId });
     } catch (error) {
         console.error(error);
         res.status(500).send('Error creating user');
     }
 });
 
-router.get('/users/:userId', async (req, res) => {
+router.get('/:userId', async (req, res) => {
     try {
         const user = await getUserById(req.params.userId);
         if (user) {
@@ -27,7 +27,7 @@ router.get('/users/:userId', async (req, res) => {
     }
 });
 
-router.put('/users/:userId', async (req, res) => {
+router.put('/:userId', async (req, res) => {
     try {
         await updateUser(req.params.userId, req.body);
         res.status(204).end();
@@ -37,13 +37,24 @@ router.put('/users/:userId', async (req, res) => {
     }
 });
 
-router.delete('/users/:userId', async (req, res) => {
+router.delete('/:userId', async (req, res) => {
     try {
         await deleteUser(req.params.userId);
         res.status(204).end();
     } catch (error) {
         console.error(error);
         res.status(500).send('Error deleting user');
+    }
+});
+
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const userId = await loginUser(email, password);
+        res.json({ success: true, token: userId });
+    } catch (error) {
+        console.error(error);
+        res.status(401).send('Invalid credentials'); // 로그인 실패 시 401 Unauthorized 반환
     }
 });
 
