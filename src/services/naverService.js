@@ -11,15 +11,14 @@ export async function getAddress(query) {
                 'X-NCP-APIGW-API-KEY': process.env.NAVERSECRETKEY,
             },
         });
-        console.log(response);
-        console.log('!');
-        return response.data;
+        return { x: response.data.addresses[0].x, y: response.data.addresses[0].y };
     } catch (error) {
         console.log(error);
     }
 }
 export async function getAddressWithCoordinate(x, y) {
-    const coordinate = String(x + ',' + y);
+    const coordinate = String(x) + ',' + String(y);
+    console.log(coordinate);
     try {
         const response = await axios.get('https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc', {
             params: {
@@ -30,6 +29,7 @@ export async function getAddressWithCoordinate(x, y) {
             headers: {
                 'X-NCP-APIGW-API-KEY-ID': process.env.NAVERKEY,
                 'X-NCP-APIGW-API-KEY': process.env.NAVERSECRETKEY,
+                'Access-Control-Allow-Origin': "*"
             },
         });
         const addressData = response.data.results[0];
@@ -39,6 +39,7 @@ export async function getAddressWithCoordinate(x, y) {
         } else {
             return `${addressData.region.area1.name} ${addressData.region.area2.name} ${addressData.region.area3.name} ${addressData.land.name}${addressData.land.number1}`;
         }
+
     } catch (error) {
         console.log(error);
     }

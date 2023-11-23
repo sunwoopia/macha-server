@@ -9,3 +9,4 @@ admin.initializeApp({
 const db = admin.firestore();
 
 export const usersCollection = db.collection('users');
+export const placeCollection = db.collection('places')

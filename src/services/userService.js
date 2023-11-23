@@ -1,4 +1,4 @@
-import { usersCollection } from "../collections/userCollection.js";
+import {placeCollection, usersCollection} from "../collections/userCollection.js";
 export const createUser = async (userData) => {
     const newUserRef = await usersCollection.add(userData);
     return newUserRef.id;
