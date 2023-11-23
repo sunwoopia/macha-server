@@ -1,34 +1,26 @@
 import { Router } from 'express';
-import {fetchLastTrainTime, getBusInfo} from "../services/dataService.js";
-import {getAddress, getAddressWithCoordinate, getMachaData} from "../services/naverService.js";
-import axios from "axios";  
+import axios from "axios";
+import {getAddress, getAddressWithCoordinate} from "../services/naverService.js";
+import { createPlace, getPlacesByUserId } from "../services/placeService.js";
+
 const router = Router();
 
 // 장소 생성 엔드포인트
 router.post('/places', async (req, res) => {
     try {
-        const { name, address } = req.body;
-
-        // Firestore에 데이터 추가
-        const docRef = await firestore.collection('places').add({
-            name,
-            address
-        });
-
-        res.status(201).json({ id: docRef.id, message: 'Place added successfully' });
+        const response = await createPlace(req.body);
+        res.status(201).json({ id: response, success: true });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-router.get('/places', async (req, res) => {
+router.get('/places/:userId', async (req, res) => {
+    const { userId } = req.params;
     try {
-        // Firestore에서 모든 장소 데이터 가져오기
-        const placesSnapshot = await firestore.collection('places').get();
-        const places = placesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        res.status(200).json(places);
+        const places = await getPlacesByUserId(userId);
+        res.status(200).json({ place: places });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -88,22 +80,23 @@ router.delete('/places/:id', async (req, res) => {
     }
 });
 
-router.get('/naver/address', async (req, res) => {
+router.post('/naver/address', async (req, res) => {
     const { address } = req.body;
     try {
         const response = await getAddress(address);
-        res.status(201).json({ response });
+        res.status(201).json({ "x": response.x, "y": response.y });
     } catch (e) {
         console.log(e);
     }
 })
 router.get('/naver/coordinate', async (req, res) => {
-    const { x, y } = req.body;
+    const { x, y } = req.query;
     try {
         const response = await getAddressWithCoordinate(x, y);
-        res.status(201).json({ response });
+        res.status(201).json({ address: response });
     } catch (e) {
         console.log(e);
+        res.status(201).json({ address: "잘못된 좌표입니다. 다시 클릭하여주세요."});
     }
 })
 
