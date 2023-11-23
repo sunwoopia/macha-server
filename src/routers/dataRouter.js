@@ -100,21 +100,19 @@ router.get('/naver/coordinate', async (req, res) => {
     }
 })
 
-router.get('/macha_api', async (req, res) => {
+router.get('/makcha', async (req, res) => {
+    const { startX, startY, endX, endY, time } = req.query;
     try {
-        // API 호출을 위한 데이터
         const requestData = {
-            startX: "126.99550509452861",
-            startY: "37.6111939110524",
-            endX: "127.08545565605205",
-            endY: "37.59626805266819",
+            startX: startX,
+            startY: startY,
+            endX: endX,
+            endY: endY,
             count: 1,
             lang: 0,
             format: "json",
-            searchDttm: "202311232300"
+            searchDttm: time, //ex. 202311232300
         };
-
-        // API 호출을 위한 설정
         const config = {
             headers: {
                 'accept': 'application/json',
@@ -122,13 +120,8 @@ router.get('/macha_api', async (req, res) => {
                 'content-type': 'application/json'
             }
         };
-
-        // API 호출
         const response = await axios.post('https://apis.openapi.sk.com/transit/routes', requestData, config);
-        
         const itineraries = response.data.metaData && response.data.metaData.plan && response.data.metaData.plan.itineraries ;
-        
-
         const bus_array = [] ;
         const subway_array = [] ;   
 
@@ -147,7 +140,7 @@ router.get('/macha_api', async (req, res) => {
                         if (leg.service === "undefined") { 
                             // 지하철 막차 확인 
                             for (const Lane of itinerary.legs){
-                                if (Lane.servie == 1){
+                                if (Lane.servie === 1){
                                     subway_array.push(1);
                                 } else {
                                     continue;
@@ -158,19 +151,12 @@ router.get('/macha_api', async (req, res) => {
                 }
             }
         }
-        
         if (bus_array.length > 0 || subway_array.length > 0) {
-            res.status(200).json(response.data); 
+            res.status(201).json(response.data);
         } else {
-            res.status(200).json({message : "막차가 없습니다."})
+            res.status(400).json({message : "막차가 없습니다."})
         }
-
-
-
-        
-        
     } catch (error) {
-        // 에러 처리
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
