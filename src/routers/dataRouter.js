@@ -111,14 +111,14 @@ router.get('/macha_api', async (req, res) => {
     try {
         // API 호출을 위한 데이터
         const requestData = {
-            startX: "127.02550910860451",
-            startY: "37.63788539420793",
-            endX: "127.030406594109",
-            endY: "37.609094989686",
+            startX: "126.99550509452861",
+            startY: "37.6111939110524",
+            endX: "127.08545565605205",
+            endY: "37.59626805266819",
             count: 1,
             lang: 0,
             format: "json",
-            searchDttm: "202311221200"
+            searchDttm: "202311232300"
         };
 
         // API 호출을 위한 설정
@@ -132,10 +132,49 @@ router.get('/macha_api', async (req, res) => {
 
         // API 호출
         const response = await axios.post('https://apis.openapi.sk.com/transit/routes', requestData, config);
+        
+        const itineraries = response.data.metaData && response.data.metaData.plan && response.data.metaData.plan.itineraries ;
+        
 
-       
-            // API 응답 전송
-        res.status(200).json(response.data);
+        const bus_array = [] ;
+        const subway_array = [] ;   
+
+        //막차가 아니고 운행중이면 배열에 원소를 넣음 
+        if (itineraries) {
+            for (const itinerary of itineraries) {
+                if (itinerary.legs) {
+                    for (const leg of itinerary.legs) {
+                        // 버스 막차 확인 
+                        if (leg.service === 1 ) {
+                            bus_array.push(1);
+                        } else if (leg.servie === 0) {
+                            continue;
+                        }
+                        
+                        if (leg.service === "undefined") { 
+                            // 지하철 막차 확인 
+                            for (const Lane of itinerary.legs){
+                                if (Lane.servie == 1){
+                                    subway_array.push(1);
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (bus_array.length > 0 || subway_array.length > 0) {
+            res.status(200).json(response.data); 
+        } else {
+            res.status(200).json({message : "막차가 없습니다."})
+        }
+
+
+
+        
         
     } catch (error) {
         // 에러 처리
@@ -143,6 +182,8 @@ router.get('/macha_api', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+        
 
 
 export default router;
