@@ -56,8 +56,6 @@ export async function getBusInfo(arsId) {
         let url = 'http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation'; /*URL*/
         let queryParams = '?' + encodeURIComponent('serviceKey') + '='+ process.env.SERVICEKEY; /*Service Key*/
         queryParams += '&' + encodeURIComponent('stSrch') + '=' + encodeURIComponent('12121'); /**/
-        // const apiUrl = `http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?ServiceKey=${process.env.SERVICEKEY}&arsId=${arsId}&resultType=json`
-        // console.log(apiUrl);
         const response = await axios.get(url + queryParams);
         console.log(response);
         return response.data;

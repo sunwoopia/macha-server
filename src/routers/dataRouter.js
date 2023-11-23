@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import axios from "axios";
 import {getAddress, getAddressWithCoordinate} from "../services/naverService.js";
 import { createPlace, getPlacesByUserId } from "../services/placeService.js";
 
@@ -81,10 +82,8 @@ router.delete('/places/:id', async (req, res) => {
 
 router.post('/naver/address', async (req, res) => {
     const { address } = req.body;
-    console.log(address);
     try {
         const response = await getAddress(address);
-        console.log(response);
         res.status(201).json({ "x": response.x, "y": response.y });
     } catch (e) {
         console.log(e);
@@ -100,4 +99,43 @@ router.get('/naver/coordinate', async (req, res) => {
         res.status(201).json({ address: "잘못된 좌표입니다. 다시 클릭하여주세요."});
     }
 })
+
+router.get('/macha_api', async (req, res) => {
+    try {
+        // API 호출을 위한 데이터
+        const requestData = {
+            startX: "127.02550910860451",
+            startY: "37.63788539420793",
+            endX: "127.030406594109",
+            endY: "37.609094989686",
+            count: 1,
+            lang: 0,
+            format: "json",
+            searchDttm: "202311221200"
+        };
+
+        // API 호출을 위한 설정
+        const config = {
+            headers: {
+                'accept': 'application/json',
+                'appKey': 'yVelZ5wcsC69m82s0or5Q68Yg4Lfknu57ZN8amog',
+                'content-type': 'application/json'
+            }
+        };
+
+        // API 호출
+        const response = await axios.post('https://apis.openapi.sk.com/transit/routes', requestData, config);
+
+
+            // API 응답 전송
+        res.status(200).json(response.data);
+
+    } catch (error) {
+        // 에러 처리
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 export default router;
