@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import axios from "axios";
 import {getAddress, getAddressWithCoordinate} from "../services/naverService.js";
-import { createPlace, getPlacesByUserId } from "../services/placeService.js";
+import {createPlace, deletePlaceById, getPlacesByUserId} from "../services/placeService.js";
 
 const router = Router();
 
@@ -68,12 +68,8 @@ router.put('/places/:id', async (req, res) => {
 router.delete('/places/:id', async (req, res) => {
     try {
         const { id } = req.params;
-
-        // Firestore에서 특정 장소 데이터 삭제
-        const docRef = firestore.collection('places').doc(id);
-        await docRef.delete();
-
-        res.status(200).json({ id, message: 'Place deleted successfully' });
+        const response = await deletePlaceById(id);
+        res.status(200).json({ success: true, message: 'Place deleted successfully' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });

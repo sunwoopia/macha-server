@@ -14,10 +14,11 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/:userId', async (req, res) => {
+    const { userId } = req.params;
     try {
-        const user = await getUserById(req.params.userId);
+        const user = await getUserById(userId);
         if (user) {
-            res.json(user);
+            res.status(201).json({ success: true, data: user });
         } else {
             res.status(404).send('User not found');
         }
