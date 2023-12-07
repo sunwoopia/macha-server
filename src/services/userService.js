@@ -27,10 +27,15 @@ export const loginUser = async (email, password) => {
         const data = [];
         const snapshot = await usersCollection.where('email', '==', email).get();
         snapshot.forEach((doc) => {
-            data.push(doc.data());
-            userUid = doc.exists ? doc.id : null;
+            const userData = doc.data();
+            data.push(userData);
+            if (doc.exists && userUid && userData.password === password) {
+                userUid = doc.id;
+                return userUid;
+            } else {
+                return false;
+            }
         });
-        return userUid;
     } catch (error) {
         console.error('Error logging in:', error);
         throw error;
