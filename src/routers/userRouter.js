@@ -52,6 +52,7 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const userId = await loginUser(email, password);
+        console.log(userId);
         if (userId) {
             res.status(200).json({ success: true, token: userId });
         } else {
