@@ -67,8 +67,8 @@ router.put('/places/:id', async (req, res) => {
 // 장소 삭제 엔드포인트
 router.delete('/places/:id', async (req, res) => {
     try {
-        console.log(id);
         const { id } = req.params;
+        console.log(id);
         await deletePlaceById(id);
         res.status(200).json({ success: true, message: 'Place deleted successfully' });
     } catch (error) {
