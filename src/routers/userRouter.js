@@ -52,7 +52,11 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const userId = await loginUser(email, password);
-        res.json({ success: true, token: userId });
+        if (userId) {
+            res.status(200).json({ success: true, token: userId });
+        } else {
+            res.status(401).json({success: false, message: 'login failed'})
+        }
     } catch (error) {
         console.error(error);
         res.status(401).send('Invalid credentials'); // 로그인 실패 시 401 Unauthorized 반환
