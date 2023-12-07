@@ -24,11 +24,10 @@ export const deleteUser = async (userId) => {
 export const loginUser = async (email, password) => {
     try {
         let userUid;
-        const data = [];
         const snapshot = await usersCollection.where('email', '==', email).get();
         snapshot.forEach((doc) => {
             const userData = doc.data();
-            data.push(userData);
+            console.log(userData);
             if (doc.exists && userData.password === password) {
                 userUid = doc.id;
                 return userUid;
