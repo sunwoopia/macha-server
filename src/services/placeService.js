@@ -7,9 +7,15 @@ export const createPlace = async (placesData) => {
 
 export const getPlacesByUserId = async (userId) => {
     const snapshot = await placeCollection.where('userId', '==', userId).get();
-    const places = snapshot.docs.map(doc => doc.data());
+    const places = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            ...data,
+            id: doc.id, // uid 추가
+        };
+    });
     return places;
-}
+};
 export const deletePlaceById = async (placeId) => {
     try {
         await placeCollection.doc(placeId).delete();
