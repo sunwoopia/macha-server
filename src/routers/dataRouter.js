@@ -86,7 +86,7 @@ router.post('/naver/address', async (req, res) => {
         const response = await getAddress(address);
         res.status(201).json({ "x": response.x, "y": response.y });
     } catch (e) {
-        console.log(e);
+        res.status(500).json({ success: false });
     }
 })
 router.get('/naver/coordinate', async (req, res) => {
