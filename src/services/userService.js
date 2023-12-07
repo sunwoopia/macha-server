@@ -28,7 +28,8 @@ export const loginUser = async (email, password) => {
         snapshot.forEach((doc) => {
             const userData = doc.data();
             console.log(userData);
-            if (doc.exists && userData.password === password) {
+            console.log(doc);
+            if (userData.password === password) {
                 userUid = doc.id;
                 return userUid;
             } else {
