@@ -67,9 +67,7 @@ router.put('/places/:id', async (req, res) => {
 // 장소 삭제 엔드포인트
 router.delete('/places/:id', async (req, res) => {
     try {
-        console.log('!');
         const { id } = req.params;
-        console.log(id);
         await deletePlaceById(id);
         res.status(200).json({ success: true, message: 'Place deleted successfully' });
     } catch (error) {
@@ -93,7 +91,6 @@ router.get('/naver/coordinate', async (req, res) => {
         const response = await getAddressWithCoordinate(x, y);
         res.status(201).json({ address: response });
     } catch (e) {
-        console.log(e);
         res.status(201).json({ address: "잘못된 좌표입니다. 다시 클릭하여주세요."});
     }
 })

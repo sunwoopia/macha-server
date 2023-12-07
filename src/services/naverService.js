@@ -18,7 +18,6 @@ export async function getAddress(query) {
 }
 export async function getAddressWithCoordinate(x, y) {
     const coordinate = String(x) + ',' + String(y);
-    console.log(coordinate);
     try {
         const response = await axios.get('https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc', {
             params: {

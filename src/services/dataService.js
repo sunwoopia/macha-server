@@ -57,7 +57,6 @@ export async function getBusInfo(arsId) {
         let queryParams = '?' + encodeURIComponent('serviceKey') + '='+ process.env.SERVICEKEY; /*Service Key*/
         queryParams += '&' + encodeURIComponent('stSrch') + '=' + encodeURIComponent('12121'); /**/
         const response = await axios.get(url + queryParams);
-        console.log(response);
         return response.data;
     } catch (e) {
         console.log(e);
